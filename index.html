@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1Генератор случайного числа</title>
+    <title>Генератор случайного числа</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
         window.onload = function() {
@@ -11,24 +11,30 @@
             if (Telegram.WebApp) {
                 Telegram.WebApp.ready();
                 console.log("Telegram WebApp is ready");
+            }
+
+            // Извлечение параметра d из URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const d = urlParams.get('d'); // Получаем переменную d
+
+            if (d) {
+                document.getElementById('d-value').innerText = `Полученное значение: ${d}`;
             } else {
-                console.log("Telegram.WebApp not found");
+                document.getElementById('d-value').innerText = "Переменная d не передана.";
             }
         };
 
         function sendDataToBot() {
-            const randomNum = Math.floor(Math.random() * 100); // Генерация числа
-            console.log("Generated number:", randomNum);
-            Telegram.WebApp.sendData(randomNum.toString()); // Отправка данных боту
-
-            // Показ сообщения после отправки
+            const randomNum = Math.floor(Math.random() * 100);
+            Telegram.WebApp.sendData(randomNum.toString());
             document.getElementById('message').innerText = `Число ${randomNum} успешно отправлено боту!`;
         }
     </script>
 </head>
 <body>
     <h1>Генератор случайного числа</h1>
+    <p id="d-value" style="font-size: 18px; color: blue;"></p> <!-- Параграф для отображения переменной d -->
     <button onclick="sendDataToBot()">Сгенерировать и отправить число</button>
-    <p id="message" style="margin-top: 20px; font-size: 18px; color: green;"></p> <!-- Пустой параграф для вывода сообщения -->
+    <p id="message" style="margin-top: 20px; font-size: 18px; color: green;"></p>
 </body>
 </html>
