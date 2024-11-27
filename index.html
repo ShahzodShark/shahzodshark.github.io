@@ -3,93 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Простой одностраничный сайт</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            line-height: 1.6;
+    <title>Генератор случайного числа</title>
+    <script>
+        window.onload = function() {
+            console.log("WebApp initialized");
+            if (Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                console.log("Telegram WebApp is ready");
+            } else {
+                console.log("Telegram.WebApp not found");
+            }
+        };
+
+        function sendDataToBot() {
+            const randomNum = Math.floor(Math.random() * 100); // Генерация числа
+            console.log("Generated number:", randomNum);
+            Telegram.WebApp.sendData(randomNum.toString()); // Отправка данных боту
+
+            // Показ сообщения после отправки
+            document.getElementById('message').innerText = `Число ${randomNum} успешно отправлено боту!`;
         }
-        header {
-            background: #333;
-            color: #fff;
-            padding: 1rem 0;
-            text-align: center;
-        }
-        header h1 {
-            margin: 0;
-        }
-        main {
-            padding: 2rem;
-        }
-        section {
-            margin-bottom: 2rem;
-        }
-        .image {
-            text-align: center;
-            margin: 2rem 0;
-        }
-        .image img {
-            max-width: 100%;
-            height: auto;
-            border-radius: 10px;
-        }
-        .contact-form {
-            max-width: 500px;
-            margin: 0 auto;
-        }
-        .contact-form input,
-        .contact-form textarea,
-        .contact-form button {
-            width: 100%;
-            padding: 0.75rem;
-            margin-bottom: 1rem;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-        .contact-form button {
-            background: #333;
-            color: #fff;
-            cursor: pointer;
-            border: none;
-        }
-        .contact-form button:hover {
-            background: #555;
-        }
-        footer {
-            text-align: center;
-            padding: 1rem;
-            background: #333;
-            color: #fff;
-            position: relative;
-        }
-    </style>
+    </script>
 </head>
 <body>
-    <header>
-        <h1>Добро пожаловать на наш сайт</h1>
-    </header>
-    <main>
-        <section>
-            <h2>О нас</h2>
-            <p>Мы создаем простые и удобные сайты для всех. Наша цель — сделать ваш проект успешным.</p>
-        </section>
-        <div class="image">
-            <img src="https://via.placeholder.com/800x400" alt="Пример изображения">
-        </div>
-        <section>
-            <h2>Свяжитесь с нами</h2>
-            <form class="contact-form">
-                <input type="text" name="name" placeholder="Ваше имя" required>
-                <input type="email" name="email" placeholder="Ваш email" required>
-                <textarea name="message" rows="5" placeholder="Ваше сообщение" required></textarea>
-                <button type="submit">Отправить</button>
-            </form>
-        </section>
-    </main>
-    <footer>
-        <p>&copy; 2024 Простой сайт. Все права защищены.</p>
-    </footer>
+    <h1>Генератор случайного числа</h1>
+    <button onclick="sendDataToBot()">Сгенерировать и отправить число</button>
+    <p id="message" style="margin-top: 20px; font-size: 18px; color: green;"></p> <!-- Пустой параграф для вывода сообщения -->
 </body>
 </html>
