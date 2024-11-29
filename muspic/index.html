@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ввод данных</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script>
+        // Ждём, пока загрузится WebApp Telegram
+        window.onload = function() {
+            Telegram.WebApp.ready();
+        };
+
+        function sendData() {
+            const artist = document.getElementById('artist').value;
+            const track = document.getElementById('track').value;
+            const lyrics = document.getElementById('lyrics').value;
+
+            // Формируем сообщение
+            const message = `Артист: ${artist}\nТрек: ${track}\nСтроки: ${lyrics}`;
+
+            // Отправляем данные боту
+            Telegram.WebApp.sendData(message); // Отправка данных боту
+        }
+    </script>
+</head>
+<body>
+    <h1>Введите данные:</h1>
+    <label for="artist">Имя артиста:</label><br>
+    <input type="text" id="artist" required><br><br>
+
+    <label for="track">Название трека:</label><br>
+    <input type="text" id="track" required><br><br>
+
+    <label for="lyrics">Строки из трека:</label><br>
+    <textarea id="lyrics" required></textarea><br><br>
+
+    <button onclick="sendData()">Отправить</button>
+</body>
+</html>
