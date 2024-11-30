@@ -50,7 +50,7 @@
             background-color: #0056b3;
         }
     </style>
-  <script>
+ <script>
     // Ждём, пока загрузится WebApp Telegram
     window.onload = function() {
         Telegram.WebApp.ready();
@@ -64,11 +64,23 @@
         const profession = document.getElementById('profession').value;
         const description = document.getElementById('description').value;
 
-        // Формируем сообщение
-        const message = `📝 Название компании: ${companyName}\n🏙️ Город: ${city}\n👨‍💼 Опыт: ${experience} лет\n💰 Зарплата: ${salary} сомони\n👔 Профессия: ${profession}\n📋 Описание и требования:\n${description}`;
+        // Формируем текстовое сообщение
+        // const textMessage = `📝 Название компании: ${companyName}\n🏙️ Город: ${city}\n👨‍💼 Опыт: ${experience} лет\n💰 Зарплата: ${salary} сомони\n👔 Профессия: ${profession}\n📋 Описание и требования:\n${description}`;
 
-        // Отправляем данные боту
-        Telegram.WebApp.sendData(message); 
+        // Формируем JSON
+        const jsonMessage = JSON.stringify({
+            company_name: companyName,
+            city: city,
+            experience: experience,
+            salary: salary,
+            profession: profession,
+            description: description
+        }, null, 2);
+
+        // Отправляем оба сообщения в одном пакете данных
+        const finalMessage = `${jsonMessage}`;
+
+        Telegram.WebApp.sendData(finalMessage); 
     }
 </script>
 </head>
