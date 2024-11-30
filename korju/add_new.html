@@ -64,6 +64,7 @@
         const salary = document.getElementById('salary').value;
         const profession = document.getElementById('profession').value;
         const description = document.getElementById('description').value;
+        const title = document.getElementById('vctitle').value;
 
         // Формируем текстовое сообщение
         // const textMessage = `📝 Название компании: ${companyName}\n🏙️ Город: ${city}\n👨‍💼 Опыт: ${experience} лет\n💰 Зарплата: ${salary} сомони\n👔 Профессия: ${profession}\n📋 Описание и требования:\n${description}`;
@@ -75,7 +76,8 @@
             experience: experience,
             salary: salary,
             profession: profession,
-            description: description
+            description: description,
+            title: title
         }, null, 2);
 
         // Отправляем оба сообщения в одном пакете данных
@@ -89,6 +91,10 @@
 
 <div class="form-container">
     <h2>Новая Ваканция</h2>
+        <div class="form-group">
+            <label for="company-name">Заголовок</label>
+            <input type="text" id="vctitle" name="title" required>
+        </div>
         <div class="form-group">
             <label for="company-name">Название компании</label>
             <input type="text" id="company-name" name="company_name" required>
