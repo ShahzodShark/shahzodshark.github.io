@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Форма заявки</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f9;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        textarea {
+            resize: vertical;
+            height: 100px;
+        }
+        .submit-btn {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        .submit-btn:hover {
+            background-color: #0056b3;
+        }
+    </style>
+  <script>
+    // Ждём, пока загрузится WebApp Telegram
+    window.onload = function() {
+        Telegram.WebApp.ready();
+    };
+
+    function sendData() {
+        const companyName = document.getElementById('company-name').value;
+        const city = document.getElementById('city').value;
+        const experience = document.getElementById('experience').value;
+        const salary = document.getElementById('salary').value;
+        const profession = document.getElementById('profession').value;
+        const description = document.getElementById('description').value;
+
+        // Формируем сообщение
+        const message = `📝 Название компании: ${companyName}\n🏙️ Город: ${city}\n👨‍💼 Опыт: ${experience} лет\n💰 Зарплата: ${salary} сомони\n👔 Профессия: ${profession}\n📋 Описание и требования:\n${description}`;
+
+        // Отправляем данные боту
+        Telegram.WebApp.sendData(message); 
+    }
+</script>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>Форма заявки</h2>
+    <form action="/submit" method="POST">
+        <div class="form-group">
+            <label for="company-name">Название компании</label>
+            <input type="text" id="company-name" name="company_name" required>
+        </div>
+
+        <div class="form-group">
+            <label for="city">Город</label>
+            <select id="city" name="city" required>
+                <option value="" disabled selected>Выберите город</option>
+                <option value="Душанбе">Душанбе</option>
+                <option value="Худжанд">Худжанд</option>
+                <option value="Бохтар">Бохтар</option>
+                <option value="Куляб">Куляб</option>
+                <option value="Пенджикент">Пенджикент</option>
+                <option value="Исфара">Исфара</option>
+                <option value="Турсунзаде">Турсунзаде</option>
+                <option value="Гиссар">Гиссар</option>
+                <option value="Истаравшан">Истаравшан</option>
+                <option value="Вахдат">Вахдат</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="experience">Опыт (в годах)</label>
+            <input type="number" id="experience" name="experience" min="0" max="50" required>
+        </div>
+
+        <div class="form-group">
+            <label for="salary">Зарплата (в сомони)</label>
+            <input type="number" id="salary" name="salary" min="0" required>
+        </div>
+
+        <div class="form-group">
+            <label for="profession">Профессия</label>
+            <select id="profession" name="profession" required>
+                <option value="" disabled selected>Выберите профессию</option>
+                <option value="Программист">Программист</option>
+                <option value="Дизайнер">Дизайнер</option>
+                <option value="Маркетолог">Маркетолог</option>
+                <option value="Учитель">Учитель</option>
+                <option value="Инженер">Инженер</option>
+                <option value="Врач">Врач</option>
+                <option value="Бухгалтер">Бухгалтер</option>
+                <option value="Юрист">Юрист</option>
+                <option value="Менеджер">Менеджер</option>
+                <option value="Архитектор">Архитектор</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="description">Описание работы и требования</label>
+            <textarea id="description" name="description" required></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" onclick="sendData()">Отправить</button>
+    </form>
+</div>
+
+</body>
+</html>
