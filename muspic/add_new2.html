@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>MusPic Studio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700;800&family=Raleway:wght@700;800&family=Oswald:wght@600;700&family=Playfair+Display:wght@700;800&family=Russo+One&family=Unbounded:wght@700;800&family=Inter:wght@400;500;600;700;800&family=Exo+2:wght@700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#070707;--panel:#0d0d0d;--card:#131313;--card2:#181818;
+  --border:#1c1c1c;--border2:#252525;
+  --gold:#c8a84b;--gold2:#e2c97e;--goldbg:rgba(200,168,75,0.10);
+  --text:#eeeeee;--sub:#505050;--sub2:#2a2a2a;
+}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* HEADER */
+header{flex-shrink:0;height:48px;background:var(--panel);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px}
+.logo-mark{width:26px;height:26px;background:linear-gradient(135deg,var(--gold),var(--gold2));border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.logo-word{font-family:'Bebas Neue',sans-serif;font-size:18px;letter-spacing:3px}
+.logo-word em{color:var(--gold);font-style:normal}
+.logo-sub{font-size:9px;color:var(--sub);letter-spacing:1.5px;text-transform:uppercase;margin-left:2px;align-self:flex-end;padding-bottom:2px}
+.hdr-sep{flex:1}
+.preset-bar{display:flex;gap:4px;align-items:center}
+.preset-lbl{font-size:9px;color:var(--sub);text-transform:uppercase;letter-spacing:1px;margin-right:3px}
+.pbtn{background:var(--card);border:1px solid var(--border2);color:var(--sub);font-family:'Inter',sans-serif;font-size:10px;font-weight:600;border-radius:5px;padding:5px 9px;cursor:pointer;transition:all .15s;white-space:nowrap}
+.pbtn:hover{border-color:var(--gold);color:var(--gold)}
+.pbtn.active{background:var(--goldbg);border-color:var(--gold);color:var(--gold)}
+
+/* LAYOUT */
+.app{flex:1;display:grid;grid-template-columns:300px 1fr;min-height:0}
+
+/* SIDEBAR */
+.sidebar{background:var(--panel);border-right:1px solid var(--border);overflow-y:auto;overflow-x:hidden;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.sb-sec{border-bottom:1px solid var(--border)}
+
+/* SECTION HEADER (accordion trigger) */
+.sec-hdr{display:flex;align-items:center;gap:7px;padding:11px 14px;cursor:pointer;user-select:none;transition:background .15s}
+.sec-hdr:hover{background:var(--card)}
+.sec-hdr .sec-icon{font-size:11px;color:var(--gold);width:14px;text-align:center}
+.sec-hdr .sec-title{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--sub);flex:1}
+.sec-hdr .chevron{font-size:8px;color:var(--sub);transition:transform .2s}
+.sec-hdr.open .chevron{transform:rotate(180deg)}
+.sec-body{padding:0 14px 12px;display:none}
+.sec-body.open{display:block}
+
+/* ACCORDION inside section (sub-spoiler) */
+.spoiler{border:1px solid var(--border2);border-radius:7px;margin-top:8px;overflow:hidden}
+.spoiler-hdr{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;cursor:pointer;background:var(--card);user-select:none;transition:background .15s}
+.spoiler-hdr:hover{background:var(--card2)}
+.spoiler-title{font-size:10px;font-weight:600;color:#555;letter-spacing:.5px}
+.spoiler-arrow{font-size:8px;color:var(--sub);transition:transform .2s}
+.spoiler-hdr.open .spoiler-arrow{transform:rotate(180deg)}
+.spoiler-body{padding:10px;background:var(--card);display:none;border-top:1px solid var(--border)}
+.spoiler-body.open{display:block}
+
+/* FIELDS */
+.field{display:flex;flex-direction:column;gap:3px;margin-bottom:7px}
+.field:last-child{margin-bottom:0}
+.field>label,.flbl{font-size:10px;font-weight:600;color:#3e3e3e;display:flex;justify-content:space-between;align-items:center}
+.flbl-val{color:var(--gold);font-variant-numeric:tabular-nums}
+input[type=text],textarea,select{background:var(--card);border:1px solid var(--border2);border-radius:6px;color:var(--text);font-family:'Inter',sans-serif;font-size:12px;padding:7px 10px;width:100%;outline:none;transition:border-color .15s}
+input[type=text]:focus,textarea:focus,select:focus{border-color:var(--gold)}
+input::placeholder,textarea::placeholder{color:var(--sub2)}
+textarea{resize:none;height:96px;line-height:1.6}
+select{cursor:pointer;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='5'%3E%3Cpath d='M0 0l4 5 4-5z' fill='%23444'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 9px center;padding-right:24px}
+select option{background:#131313}
+input[type=color]{height:30px;padding:2px 3px;cursor:pointer;border-radius:6px;width:100%}
+
+/* RANGE */
+.range-wrap{display:flex;align-items:center;gap:7px;margin-top:4px}
+.range-wrap input[type=range]{flex:1;appearance:none;height:2px;border-radius:2px;background:var(--border2);outline:none;cursor:pointer}
+.range-wrap input[type=range]::-webkit-slider-thumb{appearance:none;width:13px;height:13px;border-radius:50%;background:var(--gold);border:2px solid var(--bg)}
+.rv{font-size:9px;color:var(--sub);min-width:30px;text-align:right;font-variant-numeric:tabular-nums}
+
+/* TOGGLE */
+.trow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.tlbl{font-size:10px;color:#484848}
+.tog{position:relative;width:32px;height:18px;flex-shrink:0}
+.tog input{opacity:0;width:0;height:0}
+.tog-track{position:absolute;inset:0;background:var(--border2);border-radius:9px;cursor:pointer;transition:background .2s}
+.tog input:checked+.tog-track{background:var(--gold)}
+.tog-track::after{content:'';position:absolute;width:12px;height:12px;border-radius:50%;background:#fff;top:3px;left:3px;transition:transform .2s}
+.tog input:checked+.tog-track::after{transform:translateX(14px)}
+
+/* UPLOAD */
+.ubox{background:var(--card);border:1.5px dashed var(--border2);border-radius:7px;position:relative;overflow:hidden;cursor:pointer;transition:border-color .15s;min-height:58px;display:flex;align-items:center;justify-content:center}
+.ubox:hover,.ubox.drag{border-color:var(--gold)}
+.ubox input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.uph{text-align:center;padding:8px;pointer-events:none}
+.uph .ui{font-size:14px;margin-bottom:2px}
+.uph .ut{font-size:9px;color:var(--sub);line-height:1.4}
+.uph .ut b{color:var(--gold)}
+.uprev{width:100%;height:56px;object-fit:cover;display:none;border-radius:5px}
+.uprev-logo{width:100%;height:44px;object-fit:contain;display:none;border-radius:5px;padding:3px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px}
+
+/* SOCIAL BUTTONS */
+.soc-btn{background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:7px 4px;color:#3a3a3a;cursor:pointer;text-align:center;transition:all .15s;display:flex;flex-direction:column;align-items:center;gap:3px;font-family:'Inter',sans-serif}
+.soc-btn svg{width:16px;height:16px;fill:currentColor}
+.soc-btn .sl{font-size:8px;font-weight:700;letter-spacing:.3px}
+.soc-btn.on{border-color:var(--gold);color:var(--gold);background:var(--goldbg)}
+
+/* FIXED PILL */
+.fixed-pill{background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:7px 9px;display:flex;align-items:center;gap:4px;font-size:10px;color:#3a3a3a;white-space:nowrap}
+.badge{font-size:7px;background:var(--gold);color:#000;padding:1px 4px;border-radius:3px;font-weight:700}
+
+/* FONT PREVIEW */
+.font-prev-box{background:var(--card);border:1px solid var(--border2);border-radius:6px;padding:7px 10px;font-size:16px;color:#fff;text-align:center;letter-spacing:1px;margin-top:6px}
+
+/* BUTTONS */
+.btn-gold{background:linear-gradient(135deg,var(--gold),#b8943e);color:#000;font-weight:800;font-family:'Inter',sans-serif;font-size:12px;border:none;border-radius:7px;padding:11px;width:100%;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:opacity .15s,transform .1s}
+.btn-gold:hover{opacity:.88}
+.btn-gold:active{transform:scale(.98)}
+.btn-ghost{background:transparent;border:1px solid var(--border2);color:var(--sub);font-family:'Inter',sans-serif;font-size:11px;font-weight:600;border-radius:7px;padding:9px;width:100%;cursor:pointer;transition:all .15s}
+.btn-ghost:hover{border-color:var(--sub);color:var(--text)}
+
+/* PREVIEW */
+.preview-panel{background:#040404;overflow-y:auto;display:flex;flex-direction:column;align-items:center;padding:22px 18px 30px;gap:16px}
+.pv-empty{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:#161616;gap:8px;user-select:none}
+.pv-empty .big{font-size:44px}
+.pv-empty .ttl{font-size:12px;font-weight:700;color:#1a1a1a}
+.pv-empty .sub{font-size:10px;line-height:1.7}
+.pv-block{width:100%;display:flex;flex-direction:column;gap:6px}
+.pv-cap{font-size:8px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:#222}
+canvas#main{width:100%;height:auto;display:block;border-radius:4px;box-shadow:0 16px 60px rgba(0,0,0,.95)}
+.split-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.split-item{display:flex;flex-direction:column;gap:4px}
+canvas.spc{width:100%;aspect-ratio:1;display:block;border-radius:4px;box-shadow:0 8px 30px rgba(0,0,0,.8)}
+.dl-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.btn-dl{background:var(--panel);border:1px solid var(--border);color:#333;font-family:'Inter',sans-serif;font-size:9px;font-weight:700;border-radius:6px;padding:9px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s;text-transform:uppercase;letter-spacing:.5px}
+.btn-dl:hover{border-color:var(--gold);color:var(--gold)}
+
+@media(max-width:680px){
+  body{overflow:auto}
+  .app{grid-template-columns:1fr}
+  .sidebar{max-height:55vh;border-right:none;border-bottom:1px solid var(--border)}
+  .preview-panel{padding:12px}
+  .preset-bar{display:none}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-mark">рџЋµ</div>
+  <div class="logo-word">MUS<em>PIC</em></div>
+  <div class="logo-sub">Studio</div>
+  <div class="hdr-sep"></div>
+  <div class="preset-bar">
+    <span class="preset-lbl">РџСЂРµСЃРµС‚:</span>
+    <button class="pbtn active" onclick="applyPreset('dark',this)">рџЊ‘ Dark</button>
+    <button class="pbtn" onclick="applyPreset('vintage',this)">рџ“· Vintage</button>
+    <button class="pbtn" onclick="applyPreset('neon',this)">вљЎ Neon</button>
+    <button class="pbtn" onclick="applyPreset('light',this)">вЂпёЏ Light</button>
+    <button class="pbtn" onclick="applyPreset('minimal',this)">в—» Minimal</button>
+  </div>
+</header>
+
+<div class="app">
+<aside class="sidebar">
+
+<!-- в•ђв•ђ РўР Р•Рљ в•ђв•ђ -->
+<div class="sb-sec">
+  <div class="sec-hdr open" onclick="toggleSec(this)">
+    <span class="sec-icon">рџЋµ</span>
+    <span class="sec-title">РўСЂРµРє</span>
+    <span class="chevron">в–ј</span>
+  </div>
+  <div class="sec-body open">
+    <div class="field"><label>РђСЂС‚РёСЃС‚</label><input type="text" id="iArtist" placeholder="Pepel Nahudi" maxlength="40"></div>
+    <div class="field"><label>РќР°Р·РІР°РЅРёРµ</label><input type="text" id="iTrack" placeholder="Kingdom Made 2" maxlength="50"></div>
+    <div class="field"><label>РЎС‚СЂРѕС‡РєРё (5вЂ“6)</label><textarea id="iLyrics" placeholder="РћРЅР° СЂР°Р·Р±РёР»Р° РјРѕС‘ СЃРµСЂРґС†Рµ Р±СѓРґС‚Рѕ РІР°Р·Сѓ&#10;Р РЅР°СЃС‚СѓРїР°СЏ РЅР° РѕСЃРєРѕР»РєРё, РїСЂРѕР»РѕР¶РёР»Р° РјР°СЂС€СЂСѓС‚&#10;РўС‹ Р±С‹Р»Р° СЃСѓРєРѕР№, Р¶Р°Р»СЊ РЅРµ РїРѕРЅСЏР» СЌС‚Рѕ СЃСЂР°Р·Сѓ&#10;РќРѕ РїРѕС‡РµРјСѓ С‚РѕРіРґР° СЂРµС€РёР»"></textarea></div>
+  </div>
+</div>
+
+<!-- в•ђв•ђ РћР‘Р›РћР–РљРђ в•ђв•ђ -->
+<div class="sb-sec">
+  <div class="sec-hdr open" onclick="toggleSec(this)">
+    <span class="sec-icon">рџ–ј</span>
+    <span class="sec-title">РћР±Р»РѕР¶РєР°</span>
+    <span class="chevron">в–ј</span>
+  </div>
+  <div class="sec-body open">
+    <div class="ubox" id="dropCover">
+      <input type="file" id="iCover" accept="image/*">
+      <img class="uprev" id="prevCover" alt="">
+      <div class="uph" id="phCover"><div class="ui">рџ–ј</div><div class="ut">РќР°Р¶РјРё РёР»Рё РїРµСЂРµС‚Р°С‰Рё<br><b>JPG В· PNG В· WEBP</b></div></div>
+    </div>
+    <!-- Effect spoiler -->
+    <div class="spoiler">
+      <div class="spoiler-hdr" onclick="toggleSpoiler(this)">
+        <span class="spoiler-title">вњЁ Р­С„С„РµРєС‚ РЅР° РѕР±Р»РѕР¶РєСѓ</span>
+        <span class="spoiler-arrow">в–ј</span>
+      </div>
+      <div class="spoiler-body">
+        <div class="field"><select id="artEffect">
+          <option value="none">Р‘РµР· СЌС„С„РµРєС‚Р°</option>
+          <option value="glass" selected>Liquid Glass</option>
+          <option value="glow">Glow Border</option>
+          <option value="duotone">Duotone</option>
+          <option value="vhs">VHS Glitch</option>
+          <option value="freezy">рџҐ¶ Freezy</option>
+        </select></div>
+        <label class="flbl">РРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ <span class="flbl-val" id="vEffectInt">60</span></label>
+        <div class="range-wrap"><input type="range" id="rEffectInt" min="0" max="100" value="60"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- в•ђв•ђ Р¤РћРќ в•ђв•ђ -->
+<div class="sb-sec">
+  <div class="sec-hdr" onclick="toggleSec(this)">
+    <span class="sec-icon">рџЊ†</span>
+    <span class="sec-title">Р¤РѕРЅ</span>
+    <span class="chevron">в–ј</span>
+  </div>
+  <div class="sec-body">
+    <div class="field"><select id="bgMode">
+      <option value="cover">РР· РѕР±Р»РѕР¶РєРё (Р°РІС‚Рѕ)</option>
+      <option value="custom">РЎРІРѕСЏ РєР°СЂС‚РёРЅРєР°</option>
+      <option value="solid">Р¦РІРµС‚</option>
+      <option value="gradient">Р“СЂР°РґРёРµРЅС‚</option>
+    </select></div>
+    <div id="bgCustomWrap" style="display:none" class="field">
+      <div class="ubox" id="dropBg"><input type="file" id="iBg" accept="image/*"><img class="uprev" id="prevBg" alt=""><div class="uph" id="phBg"><div class="ui">рџЊ†</div><div class="ut"><b>JPG В· PNG</b></div></div></div>
+    </div>
+    <div id="bgSolidWrap" style="display:none" class="field"><label>Р¦РІРµС‚</label><input type="color" id="iBgColor" value="#0a0a0a"></div>
+    <div id="bgGradWrap" style="display:none">
+      <div class="g2" style="margin-bottom:5px">
+        <div class="field"><label>Р¦РІРµС‚ 1</label><input type="color" id="iGrad1" value="#0a0a0a"></div>
+        <div class="field"><label>Р¦РІРµС‚ 2</label><input type="color" id="iGrad2" value="#1a0a2e"></div>
+      </div>
+      <div class="field"><select id="iGradDir"><option value="h">Р“РѕСЂРёР·РѕРЅС‚Р°Р»СЊРЅС‹Р№</option><option value="v">Р’РµСЂС‚РёРєР°Р»СЊРЅС‹Р№</option><option value="d">Р”РёР°РіРѕРЅР°Р»СЊРЅС‹Р№</option><option value="r">Р Р°РґРёР°Р»СЊРЅС‹Р№</option></select></div>
+    </div>
+    <!-- Bg settings spoiler -->
+    <div class="spoiler">
+      <div class="spoiler-hdr" onclick="toggleSpoiler(this)">
+        <span class="spoiler-title">вљ™пёЏ РџР°СЂР°РјРµС‚СЂС‹ С„РѕРЅР°</span>
+        <span class="spoiler-arrow">в–ј</span>
+      </div>
+      <div class="spoiler-body">
+        <div class="trow"><span class="tlbl">Р Р°Р·РјС‹С‚РёРµ</span><label class="tog"><input type="checkbox" id="tBlur" checked><div class="tog-track"></div></label></div>
+        <label class="flbl">РЎРёР»Р° СЂР°Р·РјС‹С‚РёСЏ <span class="flbl-val" id="vBlur">40</span></label>
+        <div class="range-wrap"><input type="range" id="rBlur" min="0" max="80" value="40"></div>
+        <div class="trow" style="margin-top:8px"><span class="tlbl">РўС‘РјРЅС‹Р№ РѕРІРµСЂР»РµР№</span><label class="tog"><input type="checkbox" id="tOv" checked><div class="tog-track"></div></label></div>
+        <label class="flbl">РћРІРµСЂР»РµР№ <span class="flbl-val" id="vOv">50%</span></label>
+        <div class="range-wrap"><input type="range" id="rOv" min="0" max="90" value="50"></div>
+        <label class="flbl" style="margin-top:8px">РЇСЂРєРѕСЃС‚СЊ <span class="flbl-val" id="vBright">40%</span></label>
+        <div class="range-wrap"><input type="range" id="rBright" min="10" max="100" value="40"></div>
+        <label class="flbl" style="margin-top:6px">РќР°СЃС‹С‰РµРЅРЅРѕСЃС‚СЊ <span class="flbl-val" id="vSat">60%</span></label>
+        <div class="range-wrap"><input type="range" id="rSat" min="0" max="150" value="60"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- в•ђв•ђ РўРРџРћР“Р РђР¤РРљРђ + РўР•РљРЎРўР« в•ђв•ђ -->
+<div class="sb-sec">
+  <div class="sec-hdr open" onclick="toggleSec(this)">
+    <span class="sec-icon">Aa</span>
+    <span class="sec-title">РўРёРїРѕРіСЂР°С„РёРєР°</span>
+    <span class="chevron">в–ј</span>
+  </div>
+  <div class="sec-body open">
+    <div class="field"><label>РЁСЂРёС„С‚</label>
+      <select id="iFont">
+        <option value="'Bebas Neue'">Bebas Neue вЂ” РєР»Р°СЃСЃРёРєР°</option>
+        <option value="'Montserrat'">Montserrat вЂ” СЃРѕРІСЂРµРјРµРЅРЅС‹Р№</option>
+        <option value="'Raleway'">Raleway вЂ” СЌР»РµРіР°РЅС‚РЅС‹Р№</option>
+        <option value="'Oswald'">Oswald вЂ” РїР»РѕС‚РЅС‹Р№</option>
+        <option value="'Russo One'">Russo One вЂ” Р¶С‘СЃС‚РєРёР№</option>
+        <option value="'Unbounded'">Unbounded вЂ” С€РёСЂРѕРєРёР№</option>
+        <option value="'Playfair Display'">Playfair Display вЂ” СЃРµСЂРёС„</option>
+        <option value="'Exo 2'">Exo 2 вЂ” С‚РµС…РЅРѕ</option>
+        <option value="'Orbitron'">Orbitron вЂ” РєРёР±РµСЂРїР°РЅРє</option>
+        <option value="'Inter'">Inter вЂ” РјРёРЅРёРјР°Р»</option>
+        <option value="__custom__">+ Р—Р°РіСЂСѓР·РёС‚СЊ СЃРІРѕР№ С€СЂРёС„С‚...</option>
+      </select>
+    </div>
+    <div id="customFontWrap" style="display:none" class="field">
+      <div class="ubox" id="dropFont"><input type="file" id="iFont2" accept=".ttf,.otf,.woff,.woff2"><div class="uph" id="phFont"><div class="ut"><b>TTF В· OTF В· WOFF</b></div></div></div>
+      <div id="customFontName" style="font-size:10px;color:var(--gold);margin-top:3px;display:none"></div>
+    </div>
+    <div class="font-prev-box" id="fontPreview">PEPEL NAHUDI</div>
+
+    <!-- ARTST spoiler -->
+    <div class="spoiler">
+      <div class="spoiler-hdr" onclick="toggleSpoiler(this)">
+        <span class="spoiler-title">рџЋ¤ РђСЂС‚РёСЃС‚ вЂ” РїР°СЂР°РјРµС‚СЂС‹</span>
+        <span class="spoiler-arrow">в–ј</span>
+      </div>
+      <div class="spoiler-body">
+        <label class="flbl">Р Р°Р·РјРµСЂ <span class="flbl-val" id="vFsArtist">68px</span></label>
+        <div class="range-wrap"><input type="range" id="rFsArtist" min="20" max="140" value="68"></div>
+        <label class="flbl" style="margin-top:7px">РџРѕР·РёС†РёСЏ X <span class="flbl-val" id="vArtistX">333</span></label>
+        <div class="range-wrap"><input type="range" id="rArtistX" min="50" max="1060" value="333"></div>
+        <label class="flbl" style="margin-top:5px">РџРѕР·РёС†РёСЏ Y <span class="flbl-val" id="vArtistY">500</span></label>
+        <div class="range-wrap"><input type="range" id="rArtistY" min="80" max="1000" value="500"></div>
+        <div class="field" style="margin-top:7px"><label>Р¦РІРµС‚</label><input type="color" id="cArtist" value="#ffffff"></div>
+      </div>
+    </div>
+
+    <!-- TRACK spoiler -->
+    <div class="spoiler">
+      <div class="spoiler-hdr" onclick="toggleSpoiler(this)">
+        <span class="spoiler-title">рџЋµ РўСЂРµРє вЂ” РїР°СЂР°РјРµС‚СЂС‹</span>
+        <span class="spoiler-arrow">в–ј</span>
+      </div>
+      <div class="spoiler-body">
+        <label class="flbl">Р Р°Р·РјРµСЂ <span class="flbl-val" id="vFsTrack">48px</span></label>
+        <div class="range-wrap"><input type="range" id="rFsTrack" min="14" max="100" value="48"></div>
+        <label class="flbl" style="margin-top:7px">РџРѕР·РёС†РёСЏ X <span class="flbl-val" id="vTrackX">333</span></label>
+        <div class="range-wrap"><input type="range" id="rTrackX" min="50" max="1060" value="333"></div>
+        <label class="flbl" style="margin-top:5px">РџРѕР·РёС†РёСЏ Y <span class="flbl-val" id="vTrackY">624</span></label>
+        <div class="range-wrap"><input type="range" id="rTrackY" min="80" max="1000" value="624"></div>
+        <div class="field" style="margin-top:7px"><label>Р¦РІРµС‚</label><input type="color" id="cTrack" value="#aaaaaa"></div>
+      </div>
+    </div>
+
+    <!-- LYRICS spoiler -->
+    <div class="spoiler">
+      <div class="spoiler-hdr" onclick="toggleSpoiler(this)">
+        <span class="spoiler-title">рџ“ќ РЎС‚СЂРѕС‡РєРё вЂ” РїР°СЂР°РјРµС‚СЂС‹</span>
+        <span class="spoiler-arrow">в–ј</span>
+      </div>
+      <div class="spoiler-body">
+        <label class="flbl">Р Р°Р·РјРµСЂ <span class="flbl-val" id="vFsLyrics">33px</span></label>
+        <div class="range-wrap"><input type="range" id="rFsLyrics" min="14" max="60" value="33"></div>
+        <label class="flbl" style="margin-top:7px">РџРѕР·РёС†РёСЏ X <span class="flbl-val" id="vLyX">1520</span></label>
+        <div class="range-wrap"><input type="range" id="rLyX" min="1080" max="2100" value="1520"></div>
+        <label class="flbl" style="margin-top:5px">РџРѕР·РёС†РёСЏ Y <span class="flbl-val" id="vLyY">540</span></label>
+        <div class="range-wrap"><input type="range" id="rLyY" min="100" max="980" value="540"></div>
+        <div class="field" style="margin-top:7px"><label>Р¦РІРµС‚</label><input type="color" id="cLyrics" value="#ffffff"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- в•ђв•ђ GRAIN в•ђв•ђ -->
+<div class="sb-sec">
+  <div class="sec-hdr" onclick="toggleSec(this)">
+    <span class="sec-icon">в—Њ</span>
+    <span class="sec-title">Grain / Texture</span>
+    <span class="chevron">в–ј</span>
+  </div>
+  <div class="sec-body">
+    <div class="trow"><span class="tlbl">Р’РєР»СЋС‡РёС‚СЊ grain</span><label class="tog"><input type="checkbox" id="tGrain" checked><div class="tog-track"></div></label></div>
+    <div id="grainCtrl">
+      <label class="flbl">РРЅС‚РµРЅСЃРёРІРЅРѕСЃС‚СЊ <span class="flbl-val" id="vGrainI">25</span></label>
+      <div class="range-wrap"><input type="range" id="rGrainI" min="0" max="100" value="25"></div>
+      <label class="flbl" style="margin-top:6px">Р Р°Р·РјРµСЂ Р·РµСЂРЅР° <span class="flbl-val" id="vGrainS">1.5</span></label>
+      <div class="range-wrap"><input type="range" id="rGrainS" min="1" max="4" step="0.5" value="1.5"></div>
+    </div>
+  </div>
+</div>
+
+<!-- в•ђв•ђ Р‘Р Р•РќР”РРќР“ в•ђв•ђ -->
+<div class="sb-sec">
+  <div class="sec-hdr open" onclick="toggleSec(this)">
+    <span class="sec-icon">рџЏ·</span>
+    <span class="sec-title">Р‘СЂРµРЅРґРёРЅРі</span>
+    <span class="chevron">в–ј</span>
+  </div>
+  <div class="sec-body open">
+    <div style="display:grid;grid-template-columns:auto 1fr;gap:7px;align-items:center;margin-bottom:8px">
+      <div class="fixed-pill">
+        <svg viewBox="0 0 24 24" width="11" height="11" fill="#229ED9"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.83.941z"/></svg>
+        @muspicbot <span class="badge">FIXED</span>
+      </div>
+      <input type="text" id="iBrand" placeholder="@shizaruedits" maxlength="25">
+    </div>
+
+    <!-- Brand spoiler -->
+    <div class="spoiler">
+      <div class="spoiler-hdr" onclick="toggleSpoiler(this)">
+        <span class="spoiler-title">вљ™пёЏ РџР°СЂР°РјРµС‚СЂС‹ РЅРёРєРЅРµР№РјР°</span>
+        <span class="spoiler-arrow">в–ј</span>
+      </div>
+      <div class="spoiler-body">
+        <div class="field"><label>РЁСЂРёС„С‚ РЅРёРєРЅРµР№РјР°</label>
+          <select id="iBrandFont">
+            <option value="'Inter'">Inter</option>
+            <option value="'Bebas Neue'">Bebas Neue</option>
+            <option value="'Montserrat'">Montserrat</option>
+            <option value="'Raleway'">Raleway</option>
+            <option value="'Oswald'">Oswald</option>
+            <option value="'Orbitron'">Orbitron</option>
+          </select>
+        </div>
+        <label class="flbl">Р Р°Р·РјРµСЂ <span class="flbl-val" id="vFsBrand">36px</span></label>
+        <div class="range-wrap"><input type="range" id="rFsBrand" min="16" max="80" value="36"></div>
+        <label class="flbl" style="margin-top:7px">РџРѕР·РёС†РёСЏ X <span class="flbl-val" id="vBrandX">255</span></label>
+        <div class="range-wrap"><input type="range" id="rBrandX" min="30" max="1050" value="255"></div>
+        <label class="flbl" style="margin-top:5px">РџРѕР·РёС†РёСЏ Y <span class="flbl-val" id="vBrandY">997</span></label>
+        <div class="range-wrap"><input type="range" id="rBrandY" min="600" max="1070" value="997"></div>
+        <div class="field" style="margin-top:7px"><label>Р¦РІРµС‚</label><input type="color" id="cBrand" value="#cccccc"></div>
+        <div class="trow" style="margin-top:8px"><span class="tlbl">Р›РѕРіРѕС‚РёРї РІРјРµСЃС‚Рѕ С‚РµРєСЃС‚Р°</span><label class="tog"><input type="checkbox" id="tLogoImg"><div class="tog-track"></div></label></div>
+        <div id="logoImgWrap" style="display:none;margin-top:6px">
+          <div class="ubox" id="dropLogo"><input type="file" id="iLogo" accept="image/*"><img class="uprev-logo" id="prevLogo" alt=""><div class="uph" id="phLogo"><div class="ut"><b>PNG РїСЂРѕР·СЂР°С‡РЅС‹Р№</b></div></div></div>
+          <label class="flbl" style="margin-top:6px">Р Р°Р·РјРµСЂ Р»РѕРіРѕ <span class="flbl-val" id="vLogoSize">120</span></label>
+          <div class="range-wrap"><input type="range" id="rLogoSize" min="40" max="300" value="120"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Socials -->
+    <div style="margin-top:8px">
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--sub);margin-bottom:7px">РЎРѕС†. СЃРµС‚Рё</div>
+      <div class="g3">
+        <button class="soc-btn on" id="sSoc_inst" onclick="toggleSoc('inst')">
+          <svg viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+          <span class="sl">Inst</span>
+        </button>
+        <button class="soc-btn on" id="sSoc_tg" onclick="toggleSoc('tg')">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.894 8.221l-1.97 9.28c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12l-6.869 4.326-2.96-.924c-.643-.204-.657-.643.136-.953l11.57-4.461c.537-.194 1.006.131.83.941z"/></svg>
+          <span class="sl">TG</span>
+        </button>
+        <button class="soc-btn on" id="sSoc_tt" onclick="toggleSoc('tt')">
+          <svg viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+          <span class="sl">TT</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- в•ђв•ђ ACTIONS в•ђв•ђ -->
+<div class="sb-sec" style="border-bottom:none;padding:12px 14px;display:flex;flex-direction:column;gap:6px">
+  <button class="btn-gold" onclick="downloadBoth()">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    РЎРєР°С‡Р°С‚СЊ РѕР±Рµ С‡Р°СЃС‚Рё
+  </button>
+  <button class="btn-ghost" onclick="resetAll()">РћС‡РёСЃС‚РёС‚СЊ</button>
+</div>
+
+</aside>
+
+<main class="preview-panel">
+  <div class="pv-empty" id="emptyState"><div class="big">рџЋґ</div><div class="ttl">РџСЂРµРІСЊСЋ Р·РґРµСЃСЊ</div><div class="sub">Р—Р°РїРѕР»РЅРё С„РѕСЂРјСѓ СЃР»РµРІР°<br>Рё Р·Р°РіСЂСѓР·Рё РѕР±Р»РѕР¶РєСѓ</div></div>
+  <div id="liveWrap" style="display:none;width:100%;flex-direction:column;gap:16px">
+    <div class="pv-block"><div class="pv-cap">2 Г— 1 вЂ” С„РёРЅР°Р»СЊРЅР°СЏ РєР°СЂС‚РѕС‡РєР°</div><canvas id="main"></canvas></div>
+    <div class="pv-block">
+      <div class="pv-cap">Р§Р°СЃС‚Рё РґР»СЏ TikTok РєР°СЂСѓСЃРµР»Рё</div>
+      <div class="split-grid">
+        <div class="split-item"><div class="pv-cap">Р§Р°СЃС‚СЊ 1</div><canvas id="c1" class="spc"></canvas></div>
+        <div class="split-item"><div class="pv-cap">Р§Р°СЃС‚СЊ 2</div><canvas id="c2" class="spc"></canvas></div>
+      </div>
+    </div>
+    <div class="dl-grid">
+      <button class="btn-dl" onclick="dl('c1','muspic_part1.jpg')">в†“ Р§Р°СЃС‚СЊ 1</button>
+      <button class="btn-dl" onclick="dl('c2','muspic_part2.jpg')">в†“ Р§Р°СЃС‚СЊ 2</button>
+    </div>
+  </div>
+</main>
+</div>
+
+<script>
+// в•ђв•ђ STATE в•ђв•ђ
+let coverImg=null,bgImg=null,logoImg=null,customFontFamily=null;
+let socials={inst:true,tg:true,tt:true};
+
+// в•ђв•ђ ACCORDION в•ђв•ђ
+function toggleSec(hdr){
+  hdr.classList.toggle('open');
+  const body=hdr.nextElementSibling;
+  body.classList.toggle('open');
+}
+function toggleSpoiler(hdr){
+  hdr.classList.toggle('open');
+  hdr.nextElementSibling.classList.toggle('open');
+}
+
+// в•ђв•ђ INPUTS в†’ render в•ђв•ђ
+const ALL_IDS=['iArtist','iTrack','iLyrics','iBrand','iFont','iBrandFont','bgMode',
+  'iBgColor','iGrad1','iGrad2','iGradDir','artEffect','rEffectInt',
+  'tBlur','rBlur','tOv','rOv','rBright','rSat',
+  'rFsArtist','rArtistX','rArtistY','cArtist',
+  'rFsTrack','rTrackX','rTrackY','cTrack',
+  'rFsLyrics','rLyX','rLyY','cLyrics',
+  'rFsBrand','rBrandX','rBrandY','cBrand',
+  'tGrain','rGrainI','rGrainS','tLogoImg','rLogoSize'];
+ALL_IDS.forEach(id=>{
+  const el=document.getElementById(id);if(!el)return;
+  el.addEventListener(el.type==='checkbox'?'change':'input',()=>{syncUI();render();});
+});
+
+// в•ђв•ђ FILE UPLOADS в•ђв•ђ
+function setupUpload(inputId,dropId,prevId,phId,setter){
+  const inp=document.getElementById(inputId),drop=document.getElementById(dropId);
+  if(!inp||!drop)return;
+  inp.addEventListener('change',e=>{if(e.target.files[0])readImg(e.target.files[0],prevId,phId,setter);});
+  drop.addEventListener('dragover',e=>{e.preventDefault();drop.classList.add('drag');});
+  drop.addEventListener('dragleave',()=>drop.classList.remove('drag'));
+  drop.addEventListener('drop',e=>{e.preventDefault();drop.classList.remove('drag');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/'))readImg(f,prevId,phId,setter);});
+}
+function readImg(file,prevId,phId,setter){
+  const r=new FileReader();
+  r.onload=ev=>{const img=new Image();img.onload=()=>{setter(img);const p=document.getElementById(prevId);if(p){p.src=ev.target.result;p.style.display='block';}const ph=document.getElementById(phId);if(ph)ph.style.display='none';render();};img.src=ev.target.result;};
+  r.readAsDataURL(file);
+}
+setupUpload('iCover','dropCover','prevCover','phCover',img=>{coverImg=img;});
+setupUpload('iBg','dropBg','prevBg','phBg',img=>{bgImg=img;});
+setupUpload('iLogo','dropLogo','prevLogo','phLogo',img=>{logoImg=img;});
+
+document.getElementById('iFont2').addEventListener('change',function(e){
+  const f=e.target.files[0];if(!f)return;
+  const r=new FileReader();
+  r.onload=ev=>{const name='CF_'+Date.now();const ff=new FontFace(name,ev.target.result);ff.load().then(loaded=>{document.fonts.add(loaded);customFontFamily=`'${name}'`;document.getElementById('customFontName').textContent='вњ“ '+f.name;document.getElementById('customFontName').style.display='block';syncUI();render();});};
+  r.readAsArrayBuffer(f);
+});
+
+// в•ђв•ђ SOCIALS в•ђв•ђ
+function toggleSoc(k){socials[k]=!socials[k];document.getElementById('sSoc_'+k).classList.toggle('on',socials[k]);render();}
+
+// в•ђв•ђ PRESETS в•ђв•ђ
+const PRESETS={
+  dark:{tBlur:true,rBlur:40,tOv:true,rOv:50,rBright:35,rSat:55,tGrain:true,rGrainI:25,rGrainS:1.5,cArtist:'#ffffff',cTrack:'#aaaaaa',cLyrics:'#ffffff',cBrand:'#cccccc',artEffect:'glass',rEffectInt:60},
+  vintage:{tBlur:true,rBlur:55,tOv:true,rOv:60,rBright:28,rSat:25,tGrain:true,rGrainI:60,rGrainS:2,cArtist:'#f5e6c8',cTrack:'#c8a878',cLyrics:'#e8d8b0',cBrand:'#d4a860',artEffect:'duotone',rEffectInt:80},
+  neon:{tBlur:true,rBlur:35,tOv:true,rOv:65,rBright:22,rSat:150,tGrain:false,rGrainI:0,rGrainS:1,cArtist:'#00ffcc',cTrack:'#ff00aa',cLyrics:'#ffffff',cBrand:'#00ffcc',artEffect:'glow',rEffectInt:85},
+  light:{tBlur:true,rBlur:20,tOv:true,rOv:10,rBright:80,rSat:80,tGrain:false,rGrainI:8,rGrainS:1,cArtist:'#111111',cTrack:'#333333',cLyrics:'#222222',cBrand:'#444444',artEffect:'none',rEffectInt:50},
+  minimal:{tBlur:false,rBlur:0,tOv:true,rOv:72,rBright:18,rSat:0,tGrain:true,rGrainI:18,rGrainS:1,cArtist:'#ffffff',cTrack:'#777777',cLyrics:'#cccccc',cBrand:'#888888',artEffect:'none',rEffectInt:40},
+};
+function applyPreset(name,btn){
+  document.querySelectorAll('.pbtn').forEach(b=>b.classList.remove('active'));
+  if(btn)btn.classList.add('active');
+  const p=PRESETS[name];
+  Object.entries(p).forEach(([k,val])=>{const el=document.getElementById(k);if(!el)return;if(el.type==='checkbox')el.checked=val;else el.value=val;});
+  syncUI();render();
+}
+
+// в•ђв•ђ SYNC UI в•ђв•ђ
+const gv=id=>document.getElementById(id)?.value;
+const gc=id=>document.getElementById(id)?.checked;
+const sv=(id,val)=>{const el=document.getElementById(id);if(el)el.textContent=val;};
+function syncUI(){
+  const bgMode=gv('bgMode');
+  document.getElementById('bgCustomWrap').style.display=bgMode==='custom'?'':'none';
+  document.getElementById('bgSolidWrap').style.display=bgMode==='solid'?'':'none';
+  document.getElementById('bgGradWrap').style.display=bgMode==='gradient'?'':'none';
+  document.getElementById('grainCtrl').style.opacity=gc('tGrain')?1:0.35;
+  document.getElementById('customFontWrap').style.display=gv('iFont')==='__custom__'?'':'none';
+  document.getElementById('logoImgWrap').style.display=gc('tLogoImg')?'':'none';
+  // Labels
+  sv('vBlur',gv('rBlur')); sv('vOv',gv('rOv')+'%'); sv('vBright',gv('rBright')+'%'); sv('vSat',gv('rSat')+'%');
+  sv('vFsArtist',gv('rFsArtist')+'px'); sv('vArtistX',gv('rArtistX')); sv('vArtistY',gv('rArtistY'));
+  sv('vFsTrack',gv('rFsTrack')+'px'); sv('vTrackX',gv('rTrackX')); sv('vTrackY',gv('rTrackY'));
+  sv('vFsLyrics',gv('rFsLyrics')+'px'); sv('vLyX',gv('rLyX')); sv('vLyY',gv('rLyY'));
+  sv('vFsBrand',gv('rFsBrand')+'px'); sv('vBrandX',gv('rBrandX')); sv('vBrandY',gv('rBrandY'));
+  sv('vGrainI',gv('rGrainI')); sv('vGrainS',gv('rGrainS'));
+  sv('vEffectInt',gv('rEffectInt')); sv('vLogoSize',gv('rLogoSize'));
+  // Font preview
+  const fsel=gv('iFont');
+  const activeFont=fsel==='__custom__'&&customFontFamily?customFontFamily:fsel;
+  const fp=document.getElementById('fontPreview');
+  fp.style.fontFamily=activeFont+',sans-serif';
+  fp.textContent=(document.getElementById('iArtist').value.trim()||'PEPEL NAHUDI').toUpperCase();
+}
+
+// в•ђв•ђ HELPERS в•ђв•ђ
+function wrapText(text,max=28){
+  const res=[];
+  for(const line of text.split('\n')){const words=(line.match(/\S+\s*/g)||[]);let cur='';for(const w of words){if((cur+w).length<=max)cur+=w;else{if(cur.trim())res.push(cur.trim());cur=w;}}if(cur.trim())res.push(cur.trim());}
+  return res;
+}
+function squareCrop(img){const W=img.naturalWidth,H=img.naturalHeight,s=Math.min(W,H);return{sx:(W-s)/2,sy:(H-s)/2,s};}
+function clipRR(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.arcTo(x+w,y,x+w,y+r,r);ctx.lineTo(x+w,y+h-r);ctx.arcTo(x+w,y+h,x+w-r,y+h,r);ctx.lineTo(x+r,y+h);ctx.arcTo(x,y+h,x,y+h-r,r);ctx.lineTo(x,y+r);ctx.arcTo(x,y,x+r,y,r);ctx.closePath();}
+function shadowTxt(ctx,text,x,y,color,ox=2,oy=2){ctx.fillStyle='rgba(0,0,0,0.88)';ctx.fillText(text,x+ox,y+oy);ctx.fillStyle=color;ctx.fillText(text,x,y);}
+
+// Draw SVG icon paths directly on canvas
+function drawSocIcon(ctx,type,x,y,size,color){
+  ctx.save();
+  ctx.fillStyle=color;
+  const s=size/24; // scale factor (paths designed for 24x24 viewBox)
+  ctx.translate(x,y-size);
+  ctx.scale(s,s);
+  ctx.beginPath();
+  if(type==='inst'){
+    // Instagram path
+    ctx.moveTo(12,2.163);ctx.bezierCurveTo(15.204,2.163,15.584,2.175,16.85,2.233);ctx.bezierCurveTo(20.102,2.381,21.621,3.924,21.769,7.152);ctx.bezierCurveTo(21.827,8.417,21.838,8.797,21.838,12.001);ctx.bezierCurveTo(21.838,15.206,21.826,15.585,21.769,16.85);ctx.bezierCurveTo(21.62,20.075,20.105,21.621,16.85,21.769);ctx.bezierCurveTo(15.584,21.827,15.206,21.839,12,21.839);ctx.bezierCurveTo(8.796,21.839,8.416,21.827,7.151,21.769);ctx.bezierCurveTo(3.891,21.62,2.38,20.07,2.232,16.849);ctx.bezierCurveTo(2.174,15.583,2.162,15.205,2.162,11.946);ctx.bezierCurveTo(2.162,8.742,2.176,8.333,2.234,7.067);ctx.bezierCurveTo(2.383,3.84,3.898,2.294,7.153,2.146);ctx.bezierCurveTo(8.419,2.089,8.798,2.163,12,2.163);
+    ctx.closePath();ctx.fill();
+    ctx.fillStyle=gv('bgMode')==='solid'?gv('iBgColor'):'#000';
+    ctx.beginPath();ctx.arc(12,12,3.6,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=color;
+    ctx.beginPath();ctx.arc(12,12,2.4,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle=gv('bgMode')==='solid'?gv('iBgColor'):'#000';
+    ctx.beginPath();ctx.arc(18.406,5.595,1,0,Math.PI*2);ctx.fill();
+  } else if(type==='tg'){
+    ctx.arc(12,12,12,0,Math.PI*2);ctx.fill();
+    ctx.fillStyle='#fff';
+    // Paper plane path simplified
+    ctx.beginPath();
+    ctx.moveTo(5,12);ctx.lineTo(19,6);ctx.lineTo(15,19);ctx.lineTo(11,15);ctx.closePath();ctx.fill();
+    ctx.fillStyle=color;
+    ctx.beginPath();ctx.moveTo(11,15);ctx.lineTo(12.5,17.5);ctx.lineTo(15,19);ctx.lineTo(11,15);ctx.fill();
+  } else if(type==='tt'){
+    // TikTok note shape
+    ctx.roundRect(0,0,24,24,4);ctx.fill();
+    ctx.fillStyle='#fff';
+    ctx.font=`bold ${14}px sans-serif`;ctx.textAlign='center';ctx.textBaseline='middle';
+    ctx.fillText('в™Є',12,12);
+  }
+  ctx.restore();
+}
+
+// в•ђв•ђ GRAIN в•ђв•ђ
+function applyGrain(ctx,cw,ch,intensity,size){
+  if(intensity<=0)return;
+  const nw=Math.ceil(cw/size),nh=Math.ceil(ch/size);
+  const gc2=document.createElement('canvas');gc2.width=nw;gc2.height=nh;
+  const gctx=gc2.getContext('2d');const id=gctx.createImageData(nw,nh);const d=id.data;
+  const alpha=Math.round((intensity/100)*155);
+  for(let i=0;i<d.length;i+=4){const v=Math.random()>0.5?255:0;d[i]=d[i+1]=d[i+2]=v;d[i+3]=Math.floor(Math.random()*alpha);}
+  gctx.putImageData(id,0,0);
+  ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(gc2,0,0,nw,nh,0,0,cw,ch);ctx.restore();
+}
+
+// в•ђв•ђ ART EFFECTS в•ђв•ђ
+function drawArtWithEffect(ctx,img,ax,ay,as_,r,effect,intensity){
+  const t=intensity/100;
+  const{sx,sy,s}=squareCrop(img);
+  // Base draw
+  ctx.save();clipRR(ctx,ax,ay,as_,as_,r);ctx.clip();
+  ctx.drawImage(img,sx,sy,s,s,ax,ay,as_,as_);ctx.restore();
+
+  if(effect==='glass'){
+    ctx.save();clipRR(ctx,ax,ay,as_,as_,r);ctx.clip();
+    const gg=ctx.createLinearGradient(ax,ay,ax+as_,ay+as_);
+    gg.addColorStop(0,`rgba(255,255,255,${0.12*t})`);gg.addColorStop(0.5,`rgba(255,255,255,${0.02*t})`);gg.addColorStop(1,`rgba(255,255,255,${0.08*t})`);
+    ctx.fillStyle=gg;ctx.fillRect(ax,ay,as_,as_);
+    // top highlight line
+    ctx.beginPath();ctx.moveTo(ax+r,ay+3);ctx.lineTo(ax+as_-r,ay+3);
+    ctx.strokeStyle=`rgba(255,255,255,${0.55*t})`;ctx.lineWidth=3;ctx.stroke();
+    ctx.restore();
+    // border
+    ctx.save();clipRR(ctx,ax,ay,as_,as_,r);
+    ctx.strokeStyle=`rgba(255,255,255,${0.3*t})`;ctx.lineWidth=4;ctx.stroke();ctx.restore();
+  } else if(effect==='glow'){
+    for(let i=3;i>=0;i--){
+      ctx.save();
+      ctx.shadowColor=`rgba(255,140,0,${0.5*t})`;ctx.shadowBlur=25+i*18;
+      clipRR(ctx,ax-i,ay-i,as_+i*2,as_+i*2,r+i);
+      ctx.strokeStyle=`rgba(255,180,60,${(0.65-i*0.13)*t})`;ctx.lineWidth=3;ctx.stroke();ctx.restore();
+    }
+  } else if(effect==='duotone'){
+    const off=document.createElement('canvas');off.width=as_;off.height=as_;
+    const oc=off.getContext('2d');oc.drawImage(img,sx,sy,s,s,0,0,as_,as_);
+    const id2=oc.getImageData(0,0,as_,as_);const d=id2.data;
+    const c1={r:20,g:10,b:40},c2={r:220,g:160,b:60};
+    for(let i=0;i<d.length;i+=4){const lum=(d[i]*0.299+d[i+1]*0.587+d[i+2]*0.114)/255;d[i]=Math.round(c1.r+(c2.r-c1.r)*lum);d[i+1]=Math.round(c1.g+(c2.g-c1.g)*lum);d[i+2]=Math.round(c1.b+(c2.b-c1.b)*lum);}
+    oc.putImageData(id2,0,0);
+    ctx.save();clipRR(ctx,ax,ay,as_,as_,r);ctx.clip();ctx.globalAlpha=t*0.85+0.15;ctx.drawImage(off,0,0,as_,as_,ax,ay,as_,as_);ctx.restore();
+  } else if(effect==='vhs'){
+    ctx.save();clipRR(ctx,ax,ay,as_,as_,r);ctx.clip();
+    ctx.globalAlpha=0.3*t;ctx.globalCompositeOperation='screen';
+    ctx.drawImage(img,sx,sy,s,s,ax+5,ay,as_,as_);
+    ctx.drawImage(img,sx,sy,s,s,ax-5,ay,as_,as_);
+    ctx.globalAlpha=0.07*t;ctx.globalCompositeOperation='source-over';
+    for(let yy=ay;yy<ay+as_;yy+=3){ctx.fillStyle='#000';ctx.fillRect(ax,yy,as_,1);}
+    ctx.restore();
+  } else if(effect==='freezy'){
+    // рџҐ¶ emoji in 4 corners of art
+    const emoji='рџҐ¶';
+    const emojiSize=Math.round(as_*0.18);
+    ctx.font=`${emojiSize}px sans-serif`;
+    ctx.textAlign='left';ctx.textBaseline='top';
+    const pad=Math.round(as_*0.03);
+    const corners=[
+      [ax+pad, ay+pad],
+      [ax+as_-emojiSize-pad, ay+pad],
+      [ax+pad, ay+as_-emojiSize-pad],
+      [ax+as_-emojiSize-pad, ay+as_-emojiSize-pad],
+    ];
+    // Frost overlay
+    ctx.save();clipRR(ctx,ax,ay,as_,as_,r);ctx.clip();
+    const frostGrad=ctx.createRadialGradient(ax+as_/2,ay+as_/2,as_*0.2,ax+as_/2,ay+as_/2,as_*0.7);
+    frostGrad.addColorStop(0,'rgba(200,230,255,0)');frostGrad.addColorStop(1,`rgba(180,220,255,${0.25*t})`);
+    ctx.fillStyle=frostGrad;ctx.fillRect(ax,ay,as_,as_);
+    // Ice crystals overlay
+    ctx.globalAlpha=0.15*t;ctx.fillStyle='rgba(200,240,255,0.5)';
+    for(let ci=0;ci<12;ci++){const cx=ax+Math.random()*as_,cy=ay+Math.random()*as_,cr=10+Math.random()*30;ctx.beginPath();ctx.arc(cx,cy,cr,0,Math.PI*2);ctx.fill();}
+    ctx.globalAlpha=1;ctx.restore();
+    // Emojis
+    corners.forEach(([ex,ey])=>{ctx.globalAlpha=0.85*t;ctx.fillText(emoji,ex,ey);});
+    ctx.globalAlpha=1;ctx.textBaseline='alphabetic';
+  }
+}
+
+// в•ђв•ђ DRAW SOCIAL ICONS ON CANVAS (proper SVG-like rendering) в•ђв•ђ
+function drawSocialIcons(ctx,x,y,iconSize,color,activeList){
+  let cx=x;
+  const gap=iconSize*0.3;
+  activeList.forEach(type=>{
+    ctx.save();
+    ctx.translate(cx, y-iconSize+iconSize*0.1);
+    const s=iconSize/24;
+    ctx.scale(s,s);
+    ctx.fillStyle=color;
+    ctx.strokeStyle=color;
+    if(type==='inst'){
+      // Instagram rounded square
+      ctx.beginPath();ctx.roundRect(1,1,22,22,5);ctx.stroke();ctx.lineWidth=2;
+      ctx.beginPath();ctx.arc(12,12,5,0,Math.PI*2);ctx.stroke();
+      ctx.beginPath();ctx.arc(17.5,6.5,1.2,0,Math.PI*2);ctx.fill();
+    } else if(type==='tg'){
+      // Telegram paper plane
+      ctx.beginPath();
+      ctx.moveTo(22,2);ctx.lineTo(11,13);
+      ctx.moveTo(22,2);ctx.lineTo(15,22);ctx.lineTo(11,13);ctx.lineTo(2,9);ctx.lineTo(22,2);
+      ctx.stroke();ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
+    } else if(type==='tt'){
+      // TikTok note
+      ctx.beginPath();
+      ctx.moveTo(9,18);ctx.arc(7,18,2,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(17,15);ctx.arc(15,15,2,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.moveTo(9,16);ctx.lineTo(9,8);ctx.lineTo(17,6);ctx.lineTo(17,13);
+      ctx.stroke();ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
+    }
+    ctx.restore();
+    cx+=iconSize+gap;
+  });
+  return cx; // return next X position after icons
+}
+
+// в•ђв•ђ MAIN RENDER в•ђв•ђ
+function render(){
+  const artist=(gv('iArtist')||'').trim().toUpperCase();
+  const track=(gv('iTrack')||'').trim().toUpperCase();
+  const raw=(gv('iLyrics')||'').trim();
+  const brand=(gv('iBrand')||'@SHIZARUEDITS').trim().toUpperCase();
+  const bgMode=gv('bgMode');
+  const blurOn=gc('tBlur'),blurAmt=parseInt(gv('rBlur'));
+  const ovOn=gc('tOv'),ovAmt=parseInt(gv('rOv'))/100;
+  const bright=parseInt(gv('rBright')),sat=parseInt(gv('rSat'));
+  const fsel=gv('iFont');
+  const font=(fsel==='__custom__'&&customFontFamily)?customFontFamily:fsel;
+  const brandFont=gv('iBrandFont')||"'Inter'";
+  const fsArtist=parseInt(gv('rFsArtist'));
+  const artX=parseInt(gv('rArtistX')),artY=parseInt(gv('rArtistY'));
+  const fsTrack=parseInt(gv('rFsTrack'));
+  const trkX=parseInt(gv('rTrackX')),trkY=parseInt(gv('rTrackY'));
+  const fsLyrics=parseInt(gv('rFsLyrics'));
+  const lyX=parseInt(gv('rLyX')),lyY=parseInt(gv('rLyY'));
+  const fsBrand=parseInt(gv('rFsBrand'));
+  const brdX=parseInt(gv('rBrandX')),brdY=parseInt(gv('rBrandY'));
+  const cArtist=gv('cArtist'),cTrack=gv('cTrack'),cLyrics=gv('cLyrics'),cBrand=gv('cBrand');
+  const grainOn=gc('tGrain'),grainI=parseInt(gv('rGrainI')),grainS=parseFloat(gv('rGrainS'));
+  const artEffect=gv('artEffect'),effectInt=parseInt(gv('rEffectInt'));
+  const useLogoImg=gc('tLogoImg'),logoSize=parseInt(gv('rLogoSize'));
+
+  const hasAny=coverImg||artist||raw;
+  document.getElementById('emptyState').style.display=hasAny?'none':'flex';
+  const lw=document.getElementById('liveWrap');
+  lw.style.display=hasAny?'flex':'none';
+  if(!hasAny)return;
+
+  const CW=2160,CH=1080;
+  const cv=document.getElementById('main');cv.width=CW;cv.height=CH;
+  const ctx=cv.getContext('2d');
+
+  // 1. BLACK BASE
+  ctx.fillStyle='#000';ctx.fillRect(0,0,CW,CH);
+
+  // 2. BACKGROUND
+  const bgSrc=bgMode==='custom'?bgImg:(bgMode==='cover'?coverImg:null);
+  if(bgMode==='solid'){ctx.fillStyle=gv('iBgColor');ctx.fillRect(0,0,CW,CH);}
+  else if(bgMode==='gradient'){
+    const dir=gv('iGradDir');let grad;
+    if(dir==='r')grad=ctx.createRadialGradient(CW/2,CH/2,0,CW/2,CH/2,CW*0.7);
+    else if(dir==='h')grad=ctx.createLinearGradient(0,0,CW,0);
+    else if(dir==='v')grad=ctx.createLinearGradient(0,0,0,CH);
+    else grad=ctx.createLinearGradient(0,0,CW,CH);
+    grad.addColorStop(0,gv('iGrad1'));grad.addColorStop(1,gv('iGrad2'));
+    ctx.fillStyle=grad;ctx.fillRect(0,0,CW,CH);
+  } else if(bgSrc){
+    const{sx,sy,s}=squareCrop(bgSrc);
+    ctx.save();
+    const fp=[];if(blurOn&&blurAmt>0)fp.push(`blur(${blurAmt}px)`);fp.push(`brightness(${bright}%)`);fp.push(`saturate(${sat}%)`);
+    ctx.filter=fp.join(' ');ctx.drawImage(bgSrc,sx,sy,s,s,0,-CH*0.5,CW,CH*2);ctx.restore();
+  }
+
+  // 3. OVERLAY
+  if(ovOn&&ovAmt>0){ctx.fillStyle=`rgba(0,0,0,${ovAmt})`;ctx.fillRect(0,0,CW,CH);}
+
+  // 4. ALBUM ART 830Г—830 at (664,124) r=50
+  if(coverImg){
+    const AX=664,AY=124,AS=830,R=50;
+    ctx.save();ctx.shadowColor='rgba(0,0,0,0.9)';ctx.shadowBlur=50;ctx.shadowOffsetY=12;
+    clipRR(ctx,AX,AY,AS,AS,R);ctx.fillStyle='#000';ctx.fill();ctx.restore();
+    drawArtWithEffect(ctx,coverImg,AX,AY,AS,R,artEffect,effectInt);
+  }
+
+  // 5. BOT LABEL
+  ctx.textAlign='center';ctx.font='700 36px Inter,sans-serif';
+  shadowTxt(ctx,'BOT: @MUSPICBOT',333,102,'rgba(255,255,255,0.80)');
+
+  // 6. ARTIST
+  ctx.textAlign='center';ctx.font=`${fsArtist}px ${font},sans-serif`;
+  if(artist)shadowTxt(ctx,artist,artX,artY,cArtist);
+
+  // 7. TRACK
+  ctx.textAlign='center';ctx.font=`${fsTrack}px ${font},sans-serif`;
+  if(track)shadowTxt(ctx,track,trkX,trkY,cTrack);
+
+  // 8. LYRICS
+  const lines=wrapText(raw,28);const LH=fsLyrics+20;
+  const startY=lyY-(lines.length*LH)/2+fsLyrics;
+  ctx.textAlign='left';ctx.font=`${fsLyrics}px ${font},sans-serif`;
+  lines.forEach((ln,i)=>shadowTxt(ctx,ln.toUpperCase(),lyX,startY+i*LH,cLyrics));
+
+  // 9. SOCIAL ICONS + BRAND
+  const activeIcons=[];
+  if(socials.inst)activeIcons.push('inst');
+  if(socials.tg)activeIcons.push('tg');
+  if(socials.tt)activeIcons.push('tt');
+  const iconSz=Math.round(fsBrand*1.1);
+  const iconColor=cBrand;
+  ctx.lineWidth=2;ctx.lineJoin='round';ctx.lineCap='round';
+  const afterIconsX=drawSocialIcons(ctx,brdX,brdY,iconSz,iconColor,activeIcons);
+  const brandStartX=activeIcons.length>0?afterIconsX+8:brdX;
+
+  if(useLogoImg&&logoImg){
+    const lh=logoSize,lw2=logoImg.naturalWidth*(lh/logoImg.naturalHeight);
+    ctx.drawImage(logoImg,brandStartX,brdY-lh*0.75,lw2,lh);
+  } else {
+    ctx.textAlign='left';ctx.font=`700 ${fsBrand}px ${brandFont},sans-serif`;
+    shadowTxt(ctx,brand,brandStartX,brdY,cBrand,1,2);
+  }
+
+  // 10. GRAIN
+  if(grainOn&&grainI>0)applyGrain(ctx,CW,CH,grainI,grainS);
+
+  // 11. SPLIT
+  split('c1',cv,0,0,1080,1080);split('c2',cv,1080,0,1080,1080);
+}
+
+function split(id,src,sx,sy,sw,sh){const c=document.getElementById(id);c.width=1080;c.height=1080;c.getContext('2d').drawImage(src,sx,sy,sw,sh,0,0,1080,1080);}
+
+// в•ђв•ђ DOWNLOAD в•ђв•ђ
+function dl(id,fn){const c=document.getElementById(id);if(!c.width)return;const a=document.createElement('a');a.href=c.toDataURL('image/jpeg',0.96);a.download=fn;a.click();}
+function downloadBoth(){dl('c1','muspic_part1.jpg');setTimeout(()=>dl('c2','muspic_part2.jpg'),400);}
+
+// в•ђв•ђ RESET в•ђв•ђ
+function resetAll(){
+  ['iArtist','iTrack','iLyrics','iBrand'].forEach(id=>document.getElementById(id).value='');
+  coverImg=bgImg=logoImg=null;customFontFamily=null;
+  ['prevCover','prevBg','prevLogo'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='none';});
+  ['phCover','phBg','phLogo'].forEach(id=>{const el=document.getElementById(id);if(el)el.style.display='block';});
+  socials={inst:true,tg:true,tt:true};
+  ['sSoc_inst','sSoc_tg','sSoc_tt'].forEach(id=>document.getElementById(id).classList.add('on'));
+  applyPreset('dark',document.querySelector('.pbtn'));
+}
+
+syncUI();render();
+</script>
+</body>
+</html>
