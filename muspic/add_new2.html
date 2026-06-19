@@ -174,9 +174,9 @@ canvas.spc{width:100%;aspect-ratio:1;display:block;border-radius:4px;box-shadow:
     <span class="chevron">▼</span>
   </div>
   <div class="sec-body open">
-    <div class="field"><label>Артист</label><input type="text" id="iArtist" placeholder="Pepel Nahudi" maxlength="40"></div>
-    <div class="field"><label>Название</label><input type="text" id="iTrack" placeholder="Kingdom Made 2" maxlength="50"></div>
-    <div class="field"><label>Строчки (5–6)</label><textarea id="iLyrics" placeholder="Она разбила моё сердце будто вазу&#10;И наступая на осколки, проложила маршрут&#10;Ты была сукой, жаль не понял это сразу&#10;Но почему тогда решил"></textarea></div>
+    <div class="field"><label>Артист</label><input type="text" id="iArtist" placeholder="Введи имя артиста:" maxlength="40"></div>
+    <div class="field"><label>Название</label><input type="text" id="iTrack" placeholder="Введи название трека:" maxlength="50"></div>
+    <div class="field"><label>Строчки (5–6)</label><textarea id="iLyrics" placeholder="Введи строчки из песни:"></textarea></div>
   </div>
 </div>
 
@@ -398,7 +398,7 @@ canvas.spc{width:100%;aspect-ratio:1;display:block;border-radius:4px;box-shadow:
         <label class="flbl">Размер <span class="flbl-val" id="vFsBrand">36px</span></label>
         <div class="range-wrap"><input type="range" id="rFsBrand" min="16" max="80" value="36"></div>
         <label class="flbl" style="margin-top:7px">Позиция X <span class="flbl-val" id="vBrandX">255</span></label>
-        <div class="range-wrap"><input type="range" id="rBrandX" min="30" max="1050" value="255"></div>
+        <div class="range-wrap"><input type="range" id="rBrandX" min="30" max="1050" value="130"></div>
         <label class="flbl" style="margin-top:5px">Позиция Y <span class="flbl-val" id="vBrandY">997</span></label>
         <div class="range-wrap"><input type="range" id="rBrandY" min="600" max="1070" value="997"></div>
         <div class="field" style="margin-top:7px"><label>Цвет</label><input type="color" id="cBrand" value="#cccccc"></div>
@@ -561,7 +561,7 @@ function syncUI(){
   const activeFont=fsel==='__custom__'&&customFontFamily?customFontFamily:fsel;
   const fp=document.getElementById('fontPreview');
   fp.style.fontFamily=activeFont+',sans-serif';
-  fp.textContent=(document.getElementById('iArtist').value.trim()||'PEPEL NAHUDI').toUpperCase();
+  fp.textContent=(document.getElementById('iArtist').value.trim()||'MUSPIC BOT').toUpperCase();
 }
 
 // ══ HELPERS ══
@@ -735,7 +735,7 @@ function render(){
   const artist=(gv('iArtist')||'').trim().toUpperCase();
   const track=(gv('iTrack')||'').trim().toUpperCase();
   const raw=(gv('iLyrics')||'').trim();
-  const brand=(gv('iBrand')||'@SHIZARUEDITS').trim().toUpperCase();
+  const brand=(gv('iBrand')||'SHIZARUEDITS').trim().toUpperCase();
   const bgMode=gv('bgMode');
   const blurOn=gc('tBlur'),blurAmt=parseInt(gv('rBlur'));
   const ovOn=gc('tOv'),ovAmt=parseInt(gv('rOv'))/100;
@@ -799,7 +799,7 @@ function render(){
   }
 
   // 5. BOT LABEL
-  ctx.textAlign='center';ctx.font='700 36px Inter,sans-serif';
+  ctx.textAlign='center';ctx.font=`700 36px ${font},sans-serif`;
   shadowTxt(ctx,'BOT: @MUSPICBOT',333,102,'rgba(255,255,255,0.80)');
 
   // 6. ARTIST
