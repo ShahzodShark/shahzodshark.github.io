@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>MusPic Studio</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Montserrat:wght@700;800&family=Raleway:wght@700;800&family=Oswald:wght@600;700&family=Playfair+Display:wght@700;800&family=Russo+One&family=Unbounded:wght@700;800&family=Inter:wght@400;500;600;700;800&family=Exo+2:wght@700;800&family=Orbitron:wght@700;800&display=swap" rel="stylesheet">
 <style>
@@ -174,9 +175,9 @@ canvas.spc{width:100%;aspect-ratio:1;display:block;border-radius:4px;box-shadow:
     <span class="chevron">▼</span>
   </div>
   <div class="sec-body open">
-    <div class="field"><label>Артист</label><input type="text" id="iArtist" placeholder="Введи имя артиста:" maxlength="40"></div>
-    <div class="field"><label>Название</label><input type="text" id="iTrack" placeholder="Введи название трека:" maxlength="50"></div>
-    <div class="field"><label>Строчки (5–6)</label><textarea id="iLyrics" placeholder="Введи строчки из песни:"></textarea></div>
+    <div class="field"><label>Артист</label><input type="text" id="iArtist" placeholder="Pepel Nahudi" maxlength="40"></div>
+    <div class="field"><label>Название</label><input type="text" id="iTrack" placeholder="Kingdom Made 2" maxlength="50"></div>
+    <div class="field"><label>Строчки (5–6)</label><textarea id="iLyrics" placeholder="Она разбила моё сердце будто вазу&#10;И наступая на осколки, проложила маршрут&#10;Ты была сукой, жаль не понял это сразу&#10;Но почему тогда решил"></textarea></div>
   </div>
 </div>
 
@@ -398,7 +399,7 @@ canvas.spc{width:100%;aspect-ratio:1;display:block;border-radius:4px;box-shadow:
         <label class="flbl">Размер <span class="flbl-val" id="vFsBrand">36px</span></label>
         <div class="range-wrap"><input type="range" id="rFsBrand" min="16" max="80" value="36"></div>
         <label class="flbl" style="margin-top:7px">Позиция X <span class="flbl-val" id="vBrandX">255</span></label>
-        <div class="range-wrap"><input type="range" id="rBrandX" min="30" max="1050" value="130"></div>
+        <div class="range-wrap"><input type="range" id="rBrandX" min="30" max="1050" value="255"></div>
         <label class="flbl" style="margin-top:5px">Позиция Y <span class="flbl-val" id="vBrandY">997</span></label>
         <div class="range-wrap"><input type="range" id="rBrandY" min="600" max="1070" value="997"></div>
         <div class="field" style="margin-top:7px"><label>Цвет</label><input type="color" id="cBrand" value="#cccccc"></div>
@@ -561,7 +562,7 @@ function syncUI(){
   const activeFont=fsel==='__custom__'&&customFontFamily?customFontFamily:fsel;
   const fp=document.getElementById('fontPreview');
   fp.style.fontFamily=activeFont+',sans-serif';
-  fp.textContent=(document.getElementById('iArtist').value.trim()||'MUSPIC BOT').toUpperCase();
+  fp.textContent=(document.getElementById('iArtist').value.trim()||'PEPEL NAHUDI').toUpperCase();
 }
 
 // ══ HELPERS ══
@@ -735,7 +736,7 @@ function render(){
   const artist=(gv('iArtist')||'').trim().toUpperCase();
   const track=(gv('iTrack')||'').trim().toUpperCase();
   const raw=(gv('iLyrics')||'').trim();
-  const brand=(gv('iBrand')||'SHIZARUEDITS').trim().toUpperCase();
+  const brand=(gv('iBrand')||'@SHIZARUEDITS').trim().toUpperCase();
   const bgMode=gv('bgMode');
   const blurOn=gc('tBlur'),blurAmt=parseInt(gv('rBlur'));
   const ovOn=gc('tOv'),ovAmt=parseInt(gv('rOv'))/100;
@@ -799,7 +800,7 @@ function render(){
   }
 
   // 5. BOT LABEL
-  ctx.textAlign='center';ctx.font=`700 36px ${font},sans-serif`;
+  ctx.textAlign='center';ctx.font='700 36px Inter,sans-serif';
   shadowTxt(ctx,'BOT: @MUSPICBOT',333,102,'rgba(255,255,255,0.80)');
 
   // 6. ARTIST
@@ -845,8 +846,71 @@ function render(){
 function split(id,src,sx,sy,sw,sh){const c=document.getElementById(id);c.width=1080;c.height=1080;c.getContext('2d').drawImage(src,sx,sy,sw,sh,0,0,1080,1080);}
 
 // ══ DOWNLOAD ══
-function dl(id,fn){const c=document.getElementById(id);if(!c.width)return;const a=document.createElement('a');a.href=c.toDataURL('image/jpeg',0.96);a.download=fn;a.click();}
-function downloadBoth(){dl('c1','muspic_part1.jpg');setTimeout(()=>dl('c2','muspic_part2.jpg'),400);}
+const isTG = !!(window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initData);
+
+function dl(id, fn) {
+  const c = document.getElementById(id);
+  if (!c || !c.width) return;
+  const dataUrl = c.toDataURL('image/jpeg', 0.96);
+
+  if (isTG && window.Telegram.WebApp.downloadFile) {
+    // Telegram WebApp SDK 7.10+ — нативное скачивание
+    window.Telegram.WebApp.downloadFile({ url: dataUrl, file_name: fn });
+    return;
+  }
+
+  if (isTG) {
+    // Старый Telegram — открываем в новой вкладке, юзер сохраняет вручную
+    const w = window.open();
+    if (w) {
+      w.document.write(`
+        <html><body style="margin:0;background:#000;display:flex;flex-direction:column;align-items:center;padding:16px;font-family:sans-serif;color:#fff">
+          <p style="margin-bottom:10px;font-size:14px">Зажми на фото → "Сохранить"</p>
+          <img src="${dataUrl}" style="max-width:100%;border-radius:8px">
+        </body></html>
+      `);
+      w.document.close();
+    } else {
+      // Если попап заблокирован — показываем прямо в странице
+      showInPageDownload(dataUrl, fn);
+    }
+    return;
+  }
+
+  // Обычный браузер
+  const a = document.createElement('a');
+  a.href = dataUrl;
+  a.download = fn;
+  a.click();
+}
+
+function showInPageDownload(dataUrl, fn) {
+  // Показываем модалку с картинкой внутри WebApp
+  let modal = document.getElementById('dlModal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'dlModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;gap:16px';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = `
+    <div style="font-family:'Inter',sans-serif;color:#fff;text-align:center;max-width:360px;width:100%">
+      <div style="font-size:13px;color:#c8a84b;font-weight:700;margin-bottom:6px">📥 ${fn}</div>
+      <div style="font-size:11px;color:#666;margin-bottom:14px">Зажми на фото → «Сохранить изображение»</div>
+      <img src="${dataUrl}" style="width:100%;border-radius:8px;display:block;margin-bottom:16px">
+      <button onclick="document.getElementById('dlModal').style.display='none'"
+        style="background:#c8a84b;color:#000;border:none;border-radius:8px;padding:11px 24px;font-size:13px;font-weight:800;cursor:pointer;width:100%;font-family:'Inter',sans-serif">
+        Закрыть
+      </button>
+    </div>
+  `;
+  modal.style.display = 'flex';
+}
+
+function downloadBoth() {
+  dl('c1', 'muspic_part1.jpg');
+  setTimeout(() => dl('c2', 'muspic_part2.jpg'), isTG ? 1200 : 400);
+}
 
 // ══ RESET ══
 function resetAll(){
